@@ -97,13 +97,23 @@ def main():
         sns.heatmap(df, cmap="RdYlBu")
         plt.savefig("./emb"+ '.pdf')
 
-    y12 = realy[:,99,11].cpu().detach().numpy()
-    yhat12 = scaler.inverse_transform(yhat[:,99,11]).cpu().detach().numpy()
+#     y12 = realy[:,99,11].cpu().detach().numpy()
+#     yhat12 = scaler.inverse_transform(yhat[:,99,11]).cpu().detach().numpy()
 
-    y3 = realy[:,99,2].cpu().detach().numpy()
-    yhat3 = scaler.inverse_transform(yhat[:,99,2]).cpu().detach().numpy()
-
-    df2 = pd.DataFrame({'real12':y12,'pred12':yhat12, 'real3': y3, 'pred3':yhat3})
+#     y3 = realy[:,99,2].cpu().detach().numpy()
+#     yhat3 = scaler.inverse_transform(yhat[:,99,2]).cpu().detach().numpy()
+    
+    # Try to get all predictions for every sensor
+    df_dict = {}
+    for i in range(124):
+        y12 = realy[:,i,11].cpu().detach().numpy()
+        yhat12 = scaler.inverse_transform(yhat[:,i,11]).cpu().detach().numpy()
+        df_dict[f'real12_{i}'] = y12
+        df_dict[f'pred12_{i}'] = yhat12
+    
+    
+#     df2 = pd.DataFrame({'real12':y12,'pred12':yhat12, 'real3': y3, 'pred3':yhat3})
+    df2 = pd.DataFrame(df_dict)
     df2.to_csv('./wave.csv',index=False)
 
 
