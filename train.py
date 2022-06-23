@@ -124,6 +124,8 @@ def main():
         print(log.format(i, mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss, mvalid_mape, mvalid_rmse, (t2 - t1)),flush=True)
         # GWN+ metrics style 
         metrics_df.loc[i] = [mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss, mvalid_mape, mvalid_rmse]
+        # Save metrics
+        metrics_df.round(6).to_csv(args.save + 'gwn_metrics.csv')
         torch.save(engine.model.state_dict(), args.save+"_epoch_"+str(i)+"_"+str(round(mvalid_loss,2))+".pth")
     print("Average Training Time: {:.4f} secs/epoch".format(np.mean(train_time)))
     print("Average Inference Time: {:.4f} secs".format(np.mean(val_time)))
@@ -150,9 +152,6 @@ def main():
 
     print("Training finished")
     print("The valid loss on best model is", str(round(his_loss[bestid],4)))
-    
-    # Save metrics
-    metrics_df.round(6).to_csv(args.save + 'gwn_metrics.csv')
 
     amae = []
     amape = []
