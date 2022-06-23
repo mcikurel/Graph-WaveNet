@@ -44,7 +44,8 @@ def main():
     dataloader = util.load_dataset(args.data, args.batch_size, args.batch_size, args.batch_size)
     scaler = dataloader['scaler']
     supports = [torch.tensor(i).to(device) for i in adj_mx]
-
+    metrics_df = pandas.DataFrame(columns=['train_loss', 'train_mape', 'train_rmse', 'valid_loss', 'valid_mape', 'valid_rmse'])
+    
     print(args)
 
     if args.randomadj:
@@ -121,6 +122,8 @@ def main():
 
         log = 'Epoch: {:03d}, Train Loss: {:.4f}, Train MAPE: {:.4f}, Train RMSE: {:.4f}, Valid Loss: {:.4f}, Valid MAPE: {:.4f}, Valid RMSE: {:.4f}, Training Time: {:.4f}/epoch'
         print(log.format(i, mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss, mvalid_mape, mvalid_rmse, (t2 - t1)),flush=True)
+        # GWN+ metrics style 
+        metrics_df.loc[i] = [mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss, mvalid_mape, mvalid_rmse]
         torch.save(engine.model.state_dict(), args.save+"_epoch_"+str(i)+"_"+str(round(mvalid_loss,2))+".pth")
     print("Average Training Time: {:.4f} secs/epoch".format(np.mean(train_time)))
     print("Average Inference Time: {:.4f} secs".format(np.mean(val_time)))
@@ -147,7 +150,9 @@ def main():
 
     print("Training finished")
     print("The valid loss on best model is", str(round(his_loss[bestid],4)))
-
+    
+    # Save metrics
+    metrics_df.round(6).to_csv(args.save + 'gwn_metrics.csv')
 
     amae = []
     amape = []
@@ -165,7 +170,7 @@ def main():
     log = 'On average over 12 horizons, Test MAE: {:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
     print(log.format(np.mean(amae),np.mean(amape),np.mean(armse)))
 #     torch.save(engine.model.state_dict(), args.save+"_exp"+str(args.expid)+"_best_"+str(round(his_loss[bestid],2))+".pth")
-    torch.save(engine.model.state_dict(), args.save+"gwn_best_model.pth")
+    torch.save(engine.model.state_dict(), args.save + "gwn_best_model.pth")
 
 
 
