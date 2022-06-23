@@ -3,6 +3,7 @@ import numpy as np
 import argparse
 import time
 import util
+import pandas as pd
 import matplotlib.pyplot as plt
 from engine import trainer
 
@@ -44,7 +45,7 @@ def main():
     dataloader = util.load_dataset(args.data, args.batch_size, args.batch_size, args.batch_size)
     scaler = dataloader['scaler']
     supports = [torch.tensor(i).to(device) for i in adj_mx]
-    metrics_df = pandas.DataFrame(columns=['train_loss', 'train_mape', 'train_rmse', 'valid_loss', 'valid_mape', 'valid_rmse'])
+    metrics_df = pd.DataFrame(columns=['train_loss', 'train_mape', 'train_rmse', 'valid_loss', 'valid_mape', 'valid_rmse'])
     
     print(args)
 
