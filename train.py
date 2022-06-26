@@ -168,6 +168,7 @@ def main():
         amape.append(metrics[1])
         armse.append(metrics[2])
         test_metrics_df.loc[i+1] = [metrics[0], metrics[1], metrics[2]]
+        test_metrics_df.round(6).to_csv(args.save + 'gwn_test_metrics.csv')
 
     log = 'On average over 12 horizons, Test MAE: {:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
     print(log.format(np.mean(amae),np.mean(amape),np.mean(armse)))
